@@ -3,47 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Predictions</title>
+    <title>Football Match Predictions</title>
     <style>
+        /* Basic Styling */
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            text-align: center;
         }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px 0;
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
         }
-        main {
-            padding: 20px;
-        }
-        .prediction {
+
+        .match-container {
+            background-color: #fff;
+            margin: 15px;
+            padding: 15px;
             border: 1px solid #ddd;
             border-radius: 10px;
-            margin: 20px auto;
-            padding: 15px;
-            max-width: 600px;
-            background-color: #f9f9f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        footer {
+
+        .match-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .prediction-result {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
             margin-top: 20px;
-            color: #555;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .match-header {
+            font-weight: bold;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Best Predictions of the Day</h1>
-        <p>Updated daily for your insights!</p>
-    </header>
-    <main id="predictions-container">
-        <p>Loading predictions...</p>
-    </main>
-    <footer>
-        <p>Powered by GitHub Pages | © 2025 Daily Predictions</p>
-    </footer>
-    <script src="app.js"></script>
+    <div class="container">
+        <h1 style="text-align: center; margin-top: 30px;">Football Match Predictions</h1>
+        <div id="matches"></div>
+    </div>
+
+    <script>
+        // Matches list
+        const matches = [
+            { home: "Brentford", away: "Liverpool" },
+            { home: "Leicester City", away: "Fulham" },
+            { home: "West Ham United", away: "Crystal Palace" },
+            { home: "Arsenal", away: "Aston Villa" },
+            { home: "Leganés", away: "Atlético Madrid" },
+            { home: "Getafe", away: "Barcelona" },
+            { home: "Real Betis", away: "Deportivo Alavés" },
+            { home: "Bologna", away: "Monza" },
+            { home: "Juventus", away: "Milan" },
+            { home: "Atalanta", away: "Napoli" },
+            { home: "1. FC Heidenheim", away: "FC St. Pauli" },
+            { home: "FC Bayern München", away: "VfL Wolfsburg" },
+            { home: "Holstein Kiel", away: "TSG Hoffenheim" },
+            { home: "VfB Stuttgart", away: "SC Freiburg" },
+            { home: "VfL Bochum 1848", away: "RB Leipzig" },
+            { home: "Bayer 04 Leverkusen", away: "Borussia M'gladbach" },
+            { home: "RC Lens", away: "Paris Saint-Germain" },
+            { home: "Stade Rennais", away: "Stade Brestois" },
+            { home: "Olympique Lyonnais", away: "Toulouse" },
+            { home: "Rio Ave", away: "Sporting" },
+            { home: "Santa Clara", away: "Estoril Praia" },
+            { home: "PEC Zwolle", away: "PSV Eindhoven" },
+            { home: "Beşiktaş", away: "Samsunspor" },
+            { home: "Club Brugge KV", away: "K. Beerschot V.A" },
+            { home: "Levante UD", away: "Granada" },
+            { home: "Dunkerque", away: "Lorient" }
+        ];
+
+        // AI Model Simulation - Predict the outcome
+        function aiPredictMatchOutcome(home, away) {
+            // Simulated probabilities for home win, draw, and away win
+            const homeWinProb = Math.random();
+            const drawProb = Math.random();
+            const awayWinProb = 1 - homeWinProb - drawProb;
+
+            const prediction = {
+                match: `${home} vs ${away}`,
+                homeWin: homeWinProb.toFixed(2),
+                draw: drawProb.toFixed(2),
+                awayWin: awayWinProb.toFixed(2),
+                exactScorePrediction: [
+                    `${home}: 1 - ${away}: 2`,
+                    `${home}: 2 - ${away}: 1`,
+                    `${home}: 2 - ${away}: 2`
+                ]
+            };
+
+            return prediction;
+        }
+
+        // Display matches and provide "Start Prediction" button
+        function displayMatches() {
+            const matchesContainer = document.getElementById('matches');
+            matchesContainer.innerHTML = "";  // Clear previous results
+            
+            matches.forEach(match => {
+                const matchDiv = document.createElement('div');
+                matchDiv.classList.add('match-container');
+                
+                matchDiv.innerHTML = `
+                    <div>
+                        <div class="match-header">${match.home} vs ${match.away}</div>
+                        <div class="match-details">Click to start prediction</div>
+                    </div>
+                    <button class="button" onclick="startPrediction('${match.home}', '${match.away}')">Start Prediction</button>
+                    <div class="prediction-result" id="result-${match.home}-${match.away}">
+                        <div class="loader"></div> <span>Loading prediction...</span>
+                    </div>
+                `;
+                
+                matchesContainer.appendChild(matchDiv);
+            });
+        }
+
+        // Function to start prediction when button is clicked
+        function startPrediction(home, away) {
+            const resultDiv = document.getElementById(`result-${home}-${away}`);
+            resultDiv.style.display = 'block';  // Show the prediction result container
+            
+            // Simulate delay for prediction response
+            setTimeout(() => {
+                const prediction = aiPredictMatchOutcome(home, away);
+                resultDiv.innerHTML = `
+                    <p><strong>Prediction:</strong></p>
+                    <ul>
+                        <li>Home Win Probability: ${prediction.homeWin}</li>
+                        <li>Draw Probability: ${prediction.draw}</li>
+                        <li>Away Win Probability: ${prediction.awayWin}</li>
+                    </ul>
+                    <p><strong>Exact Score Predictions:</strong></p>
+                    <ul>
+                        ${prediction.exactScorePrediction.map(score => `<li>${score}</li>`).join('')}
+                    </ul>
+                `;
+            }, 2000);  // Simulate 2 seconds delay for realistic response
+        }
+
+        // Initialize and display matches
+        window.onload = displayMatches;
+    </script>
 </body>
 </html>
